@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head><title>Icon Generator</title></head>
+<body>
+<canvas id="c128" width="128" height="128"></canvas>
+<canvas id="c48"  width="48"  height="48"></canvas>
+<canvas id="c32"  width="32"  height="32"></canvas>
+<canvas id="c16"  width="16"  height="16"></canvas>
+
+<script>
+function drawIcon(canvas) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  const r = s / 2;
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, s, s);
+  grad.addColorStop(0, '#1a2744');
+  grad.addColorStop(1, '#0f1623');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, s, s, s * 0.2);
+  ctx.fill();
+
+  // Accent ring
+  ctx.strokeStyle = '#4f8ef7';
+  ctx.lineWidth = s * 0.06;
+  ctx.beginPath();
+  ctx.arc(r, r * 0.92, r * 0.52, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Checkmark
+  ctx.strokeStyle = '#4f8ef7';
+  ctx.lineWidth = s * 0.1;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(r * 0.58, r * 0.92);
+  ctx.lineTo(r * 0.86, r * 1.18);
+  ctx.lineTo(r * 1.38, r * 0.62);
+  ctx.stroke();
+
+  // Small dot (notification indicator)
+  if (s >= 32) {
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(s * 0.78, s * 0.22, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+['c128','c48','c32','c16'].forEach(id => {
+  drawIcon(document.getElementById(id));
+  const link = document.createElement('a');
+  link.download = id.replace('c','icon') + '.png';
+  link.href = document.getElementById(id).toDataURL();
+  link.textContent = 'Download ' + id;
+  link.style.display = 'block';
+  document.body.appendChild(link);
+});
+</script>
+</body>
+</html>

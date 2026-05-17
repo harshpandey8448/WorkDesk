@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkDesk — Office Productivity Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="8" height="8" rx="2" fill="#2563eb"/>
+          <rect x="13" y="3" width="8" height="8" rx="2" fill="#2563eb" opacity="0.6"/>
+          <rect x="3" y="13" width="8" height="8" rx="2" fill="#2563eb" opacity="0.6"/>
+          <rect x="13" y="13" width="8" height="8" rx="2" fill="#2563eb"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-name">WorkDesk</h1>
+        <p class="brand-tagline">Office Productivity Hub</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn dnd-btn" id="dndBtn" title="Do Not Disturb">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </button>
+      <div class="date-chip" id="dateChip"></div>
+      <div class="tz-chip" id="tzChip" title="Current timezone"></div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       NAV TABS
+  ═══════════════════════════════════════════ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="reminders" id="tab-reminders">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      Reminders
+      <span class="tab-badge" id="reminderBadge" style="display:none"></span>
+    </button>
+    <button class="tab-btn" data-tab="tasks" id="tab-tasks">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="9 11 12 14 22 4"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      Tasks
+      <span class="tab-badge" id="taskBadge" style="display:none"></span>
+    </button>
+    <button class="tab-btn" data-tab="pomodoro" id="tab-pomodoro">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Focus
+    </button>
+    <button class="tab-btn" data-tab="notes" id="tab-notes">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      Notes
+    </button>
+    <button class="tab-btn" data-tab="settings" id="tab-settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      Settings
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT AREA
+  ═══════════════════════════════════════════ -->
+  <main class="tab-content">
+
+    <!-- ─── REMINDERS TAB ─────────────────── -->
+    <section class="tab-panel active" id="panel-reminders">
+
+      <!-- Add Reminder Form -->
+      <div class="card form-card">
+        <div class="card-header">
+          <span class="card-title">New Reminder</span>
+        </div>
+        <div class="form-group">
+          <input type="text" id="reminderTitle" class="form-input" placeholder="What do you need to do?" maxlength="80" />
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">When</label>
+            <select id="reminderWhen" class="form-select">
+              <option value="custom">Specific Date & Time...</option>
+              <option value="1h">In 1 Hour</option>
+              <option value="2h">In 2 Hours</option>
+              <option value="4h">In 4 Hours</option>
+              <option value="eod">End of Day (6 PM)</option>
+              <option value="tomorrow9">Tomorrow 9 AM</option>
+              <option value="tomorrow1">Tomorrow 1 PM</option>
+              <option value="nextweek">Next Week Monday</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Repeat</label>
+            <select id="reminderRepeat" class="form-select">
+              <option value="none">No Repeat</option>
+              <option value="daily">Daily</option>
+              <option value="weekdays">Weekdays</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" id="customDateGroup" style="display: none;">
+          <div class="form-group flex-1">
+            <label class="form-label">Specific Date</label>
+            <input type="date" id="reminderCustomDate" class="form-input" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Specific Time</label>
+            <input type="time" id="reminderCustomTime" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="reminderNote" class="form-input" placeholder="Add a note (optional)" maxlength="120" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <div class="priority-picker" id="priorityPicker">
+            <button class="priority-btn active" data-priority="low">Low</button>
+            <button class="priority-btn" data-priority="medium">Medium</button>
+            <button class="priority-btn" data-priority="high">High</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="addReminderBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Set Reminder
+        </button>
+      </div>
+
+      <!-- Reminder List -->
+      <div class="section-header">
+        <span class="section-label">Active Reminders</span>
+        <button class="text-btn" id="clearFiredBtn">Clear Fired</button>
+      </div>
+      <div id="reminderList" class="item-list">
+        <div class="empty-state" id="reminderEmpty">
+          <div class="empty-icon">🔔</div>
+          <p>No reminders yet. Add one above!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TASKS TAB ─────────────────────── -->
+    <section class="tab-panel" id="panel-tasks">
+
+      <!-- Add Task Form -->
+      <div class="card form-card">
+        <div class="card-header">
+          <span class="card-title">Add Task</span>
+        </div>
+        <div class="form-group">
+          <input type="text" id="taskTitle" class="form-input" placeholder="Task description..." maxlength="100" />
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Due Date</label>
+            <input type="date" id="taskDueDate" class="form-input" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Category</label>
+            <select id="taskCategory" class="form-select">
+              <option value="general">General</option>
+              <option value="meeting">Meeting</option>
+              <option value="followup">Follow-up</option>
+              <option value="report">Report</option>
+              <option value="review">Review</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="addTaskBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Task
+        </button>
+      </div>
+
+      <!-- Task Filters -->
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" id="filterAll">All</button>
+        <button class="filter-btn" data-filter="pending" id="filterPending">Pending</button>
+        <button class="filter-btn" data-filter="done" id="filterDone">Done</button>
+        <button class="filter-btn" data-filter="overdue" id="filterOverdue">Overdue</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-section" id="taskProgressSection">
+        <div class="progress-label">
+          <span id="taskProgressText">0 of 0 completed</span>
+          <span id="taskProgressPct">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="taskProgressFill"></div>
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div id="taskList" class="item-list">
+        <div class="empty-state" id="taskEmpty">
+          <div class="empty-icon">✅</div>
+          <p>No tasks yet. Stay organized!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── POMODORO TAB ───────────────────── -->
+    <section class="tab-panel" id="panel-pomodoro">
+
+      <!-- Mode Selector -->
+      <div class="pomodoro-modes">
+        <button class="mode-btn active" data-mode="work" id="modeWork">Focus</button>
+        <button class="mode-btn" data-mode="short" id="modeShort">Short Break</button>
+        <button class="mode-btn" data-mode="long" id="modeLong">Long Break</button>
+      </div>
+
+      <!-- Timer Ring -->
+      <div class="timer-container">
+        <svg class="timer-ring" viewBox="0 0 200 200">
+          <circle class="ring-track" cx="100" cy="100" r="85" />
+          <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="85"
+            stroke-dasharray="534" stroke-dashoffset="0" />
+        </svg>
+        <div class="timer-inner">
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <div class="timer-mode-label" id="timerModeLabel">Focus Time</div>
+        </div>
+      </div>
+
+      <!-- Session Counter -->
+      <div class="session-counter">
+        <span class="session-dots" id="sessionDots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </span>
+        <span class="session-label" id="sessionLabel">Session 1 of 4</span>
+      </div>
+
+      <!-- Controls -->
+      <div class="timer-controls">
+        <button class="timer-ctrl-btn" id="timerReset" title="Reset">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
+          </svg>
+        </button>
+        <button class="timer-play-btn" id="timerToggle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="playPauseIcon">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </button>
+        <button class="timer-ctrl-btn" id="timerSkip" title="Skip">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 4 15 12 5 20 5 4"/>
+            <line x1="19" y1="5" x2="19" y2="19"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Settings -->
+      <div class="card pomodoro-settings-card">
+        <div class="card-header">
+          <span class="card-title">Timer Settings (minutes)</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Focus</label>
+            <input type="number" id="settingWork" class="form-input" min="1" max="90" value="25" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Short Break</label>
+            <input type="number" id="settingShort" class="form-input" min="1" max="30" value="5" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Long Break</label>
+            <input type="number" id="settingLong" class="form-input" min="1" max="60" value="15" />
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </section>
+
+    <!-- ─── NOTES TAB ──────────────────────── -->
+    <section class="tab-panel" id="panel-notes">
+
+      <div class="notes-toolbar">
+        <span class="section-label">Quick Notes</span>
+        <div class="notes-actions">
+          <button class="icon-btn" id="copyNoteBtn" title="Copy to clipboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+          <button class="icon-btn danger" id="clearNoteBtn" title="Clear notes">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <textarea id="notesArea" class="notes-textarea" 
+        placeholder="Jot down quick thoughts, meeting notes, ideas...&#10;&#10;Your notes are saved automatically."></textarea>
+
+      <div class="notes-footer">
+        <span class="char-count" id="charCount">0 characters</span>
+        <span class="save-indicator" id="saveIndicator"></span>
+      </div>
+
+      <!-- Quick Templates -->
+      <div class="card template-card">
+        <div class="card-header">
+          <span class="card-title">Quick Templates</span>
+        </div>
+        <div class="template-grid">
+          <button class="template-btn" data-template="meeting">📋 Meeting Notes</button>
+          <button class="template-btn" data-template="standup">🌅 Daily Standup</button>
+          <button class="template-btn" data-template="followup">📞 Follow-up</button>
+          <button class="template-btn" data-template="review">📊 Review Notes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SETTINGS TAB ─────────────────── -->
+    <section class="tab-panel" id="panel-settings">
+
+      <!-- Timezone Card -->
+      <div class="card settings-card">
+        <div class="card-header">
+          <span class="card-title">🌍 Timezone</span>
+        </div>
+        <p class="settings-desc">All reminder times ("Tomorrow 9 AM", "End of Day", etc.) will fire in this timezone.</p>
+
+        <div class="form-group">
+          <label class="form-label">Your Timezone</label>
+          <select id="timezoneSelect" class="form-select tz-select">
+            <optgroup label="🇺🇸 United States">
+              <option value="America/New_York">Eastern (EST/EDT) — New York</option>
+              <option value="America/Chicago">Central (CST/CDT) — Chicago</option>
+              <option value="America/Denver">Mountain (MST/MDT) — Denver</option>
+              <option value="America/Los_Angeles">Pacific (PST/PDT) — Los Angeles</option>
+              <option value="America/Phoenix">Mountain no-DST (MST) — Phoenix</option>
+              <option value="America/Anchorage">Alaska (AKST) — Anchorage</option>
+              <option value="Pacific/Honolulu">Hawaii (HST) — Honolulu</option>
+            </optgroup>
+            <optgroup label="🇮🇳 India">
+              <option value="Asia/Kolkata">IST (UTC+5:30) — India Standard Time</option>
+            </optgroup>
+            <optgroup label="🌍 Europe">
+              <option value="Europe/London">GMT/BST — London</option>
+              <option value="Europe/Paris">CET/CEST — Paris</option>
+              <option value="Europe/Berlin">CET/CEST — Berlin</option>
+              <option value="Europe/Moscow">MSK (UTC+3) — Moscow</option>
+            </optgroup>
+            <optgroup label="🌏 Asia-Pacific">
+              <option value="Asia/Dubai">GST (UTC+4) — Dubai</option>
+              <option value="Asia/Karachi">PKT (UTC+5) — Karachi</option>
+              <option value="Asia/Dhaka">BST (UTC+6) — Dhaka</option>
+              <option value="Asia/Bangkok">ICT (UTC+7) — Bangkok</option>
+              <option value="Asia/Singapore">SGT (UTC+8) — Singapore</option>
+              <option value="Asia/Shanghai">CST (UTC+8) — Shanghai</option>
+              <option value="Asia/Tokyo">JST (UTC+9) — Tokyo</option>
+              <option value="Asia/Seoul">KST (UTC+9) — Seoul</option>
+              <option value="Australia/Sydney">AEST/AEDT — Sydney</option>
+              <option value="Pacific/Auckland">NZST/NZDT — Auckland</option>
+            </optgroup>
+            <optgroup label="🌎 Latin America">
+              <option value="America/Sao_Paulo">BRT (UTC-3) — São Paulo</option>
+              <option value="America/Mexico_City">CST/CDT — Mexico City</option>
+              <option value="America/Bogota">COT (UTC-5) — Bogotá</option>
+            </optgroup>
+            <optgroup label="🌍 Africa">
+              <option value="Africa/Cairo">EET (UTC+2) — Cairo</option>
+              <option value="Africa/Nairobi">EAT (UTC+3) — Nairobi</option>
+              <option value="Africa/Lagos">WAT (UTC+1) — Lagos</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Live Clock -->
+        <div class="tz-live-clock">
+          <div class="tz-clock-label">Current time in your timezone</div>
+          <div class="tz-clock-display" id="tzLiveClock">--:-- --</div>
+          <div class="tz-clock-date" id="tzLiveDate"></div>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="saveTzBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save Timezone
+        </button>
+      </div>
+
+      <!-- Working Hours Card -->
+      <div class="card settings-card">
+        <div class="card-header">
+          <span class="card-title">🕘 Working Hours</span>
+        </div>
+        <p class="settings-desc">"End of Day" reminder uses your work-end time below.</p>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Work Start</label>
+            <input type="time" id="workStart" class="form-input" value="09:00" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Work End (EOD)</label>
+            <input type="time" id="workEnd" class="form-input" value="18:00" />
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full" id="saveWorkHoursBtn">
+          Save Working Hours
+        </button>
+      </div>
+
+      <!-- About -->
+      <div class="card settings-card about-card">
+        <div class="about-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="8" height="8" rx="2" fill="#2563eb"/>
+            <rect x="13" y="3" width="8" height="8" rx="2" fill="#2563eb" opacity="0.5"/>
+            <rect x="3" y="13" width="8" height="8" rx="2" fill="#2563eb" opacity="0.5"/>
+            <rect x="13" y="13" width="8" height="8" rx="2" fill="#2563eb"/>
+          </svg>
+          <span class="about-name">WorkDesk</span>
+        </div>
+        <p class="about-version">Version 1.0.0 &mdash; Office Productivity Hub</p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       TOAST NOTIFICATION
+  ═══════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════════
+       DND OVERLAY
+  ═══════════════════════════════════════════ -->
+  <div class="dnd-banner" id="dndBanner" style="display:none">
+    🔕 Do Not Disturb is ON — Notifications paused
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
